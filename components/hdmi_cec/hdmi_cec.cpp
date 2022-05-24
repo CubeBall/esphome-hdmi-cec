@@ -98,7 +98,7 @@ void HdmiCec::setup() {
   this->high_freq_.start();
 
   ESP_LOGCONFIG(TAG, "Setting up HDMI-CEC...");
-  this->Initialize(0x2000, CEC_Device::CDT_AUDIO_SYSTEM, true);
+  this->Initialize(0x1300, CEC_Device::CDT_PLAYBACK_DEVICE, true);
 
   // This isn't quite enough to allow us to get rid of the HighFrequencyLoopRequester.
   // There's probably something that needs to wait a certain amount of time after

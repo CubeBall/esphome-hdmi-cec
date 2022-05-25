@@ -72,6 +72,59 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
                             address_};
     this->send_data_internal_(this->address_, 0xF, buf, 4);
   }
+  //********************************
+  // SUPPORT AV trafic
+  // POWER STATUS - OFF
+  if (buffer[0] == 0x8F && destination == address_) {
+    unsigned char buf[2] = {0x90, 0x01};
+    this->send_data_internal_(this->address_, source, buf, 2);
+  }  
+  //     - data: [0x8F]
+  //       source: 0x5 # From the AV
+  //       destination: 4 #!lambda 'return id(hdmi_cec_id).current_local_address' # 0x08
+  //       then:
+  //         - hdmi_cec.send:
+  //             destination: 0x5
+  //             data: [0x90, 0x01]
+  // OSD NAME
+  if (buffer[0] == 0x46 && destination == address_) {
+    unsigned char buf[9] = {0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43}; //"SmartCEC"
+    this->send_data_internal_(this->address_, source, buf, 9);
+  }  
+  //     - data: [0x46]
+  //       source: 0x5 # From the AV
+  //       destination: 4 #!lambda 'return id(hdmi_cec_id).current_local_address' # 0x08
+  //       then:
+  //         - hdmi_cec.send:
+  //             destination: 0x5
+  //             data: [0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43]
+ 
+  // Vendor data
+  if (buffer[0] == 0x8C && destination == address_) {
+    unsigned char buf[4] = {0x87, 0x00, 0xE0, 0x36};
+    this->send_data_internal_(this->address_, 0xF, buf, 4);
+  }  
+  //     - data: [0x8C]
+  //       source: 0x5 # From the AV
+  //       destination: 4 #!lambda 'return id(hdmi_cec_id).current_local_address' # 0x08
+  //       then:
+  //         - hdmi_cec.send:
+  //             destination: 0x0F
+  //             data: [0x87, 0x0, 0x0, 0x0]
+
+  // CEC Version
+  if (buffer[0] == 0x9F && destination == address_) {
+    unsigned char buf[2] = {0x9E, 0x05};
+    this->send_data_internal_(this->address_, source, buf, 2);
+  }  
+  //     - data: [0x9F]
+  //       source: 0x0 # From the TV
+  //       destination: 4 #!lambda 'return id(hdmi_cec_id).current_local_address' # 0x08
+  //       then:
+  //         - hdmi_cec.send:
+  //             destination: 0x0
+  //             data: [0x9E, 0x05]
+  //********************************
 
   uint8_t opcode = buffer[0];
   for (auto *trigger : this->triggers_) {
@@ -98,7 +151,8 @@ void HdmiCec::setup() {
   this->high_freq_.start();
 
   ESP_LOGCONFIG(TAG, "Setting up HDMI-CEC...");
-  this->Initialize(0x1300, CEC_Device::CDT_PLAYBACK_DEVICE, true);
+  //this->Initialize(0x1300, CEC_Device::CDT_PLAYBACK_DEVICE, true);
+  this->Initialize(this->physical_address_, CEC_Device::CDT_PLAYBACK_DEVICE, true);
 
   // This isn't quite enough to allow us to get rid of the HighFrequencyLoopRequester.
   // There's probably something that needs to wait a certain amount of time after

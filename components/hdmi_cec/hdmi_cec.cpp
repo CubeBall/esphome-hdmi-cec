@@ -50,6 +50,8 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
   auto source = (buffer[0] & 0xF0) >> 4;
   auto destination = (buffer[0] & 0x0F);
 
+  unsigned char buf[4];
+
   // If we're not in promiscuous mode and the message isn't for us, ignore it.
   if (!this->promiscuous_mode_ && destination != this->address_ && destination != 0xF) {
     return;
@@ -63,16 +65,16 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
   message_to_debug_string(debug_message, buffer, count);
   ESP_LOGD(TAG, "RX: (%d->%d) %02X:%s", source, destination, ((source & 0x0f) << 4) | (destination & 0x0f),
            debug_message);
-
+  
+  
   if(destination == address_) {
-    switch(buffer[0])
-    {
+    switch (buffer[0]) {
       // Handling the physical address response in code instead of yaml since I think it always
       // needs to happen for other devices to be able to talk to this device.
       case 0x83:
       // if (buffer[0] == 0x83 && destination == address_) {
         // Report physical address
-        unsigned char buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff),
+        buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff),
                                 address_};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
       // }
@@ -82,7 +84,7 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
       // POWER STATUS - OFF
       case 0x8F:
       // if (buffer[0] == 0x8F && destination == address_) {
-        unsigned char buf[2] = {0x90, 0x01};
+        buf[2] = {0x90, 0x01};
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
         break;

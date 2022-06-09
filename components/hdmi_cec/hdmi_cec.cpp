@@ -144,11 +144,11 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
       // }  
         break;
       //********************************
-      default:
-        //INVALID OPERAND
-        unsigned char buf[3] = {0x00, 0x00, 0x03}; 
-        this->send_data_internal_(this->address_, source, buf, 3);
-        break;
+      // default:
+      //   //INVALID OPERAND
+      //   unsigned char buf[3] = {0x00, 0x00, 0x03}; 
+      //   this->send_data_internal_(this->address_, source, buf, 3);
+      //   break;
     }
   }
   uint8_t opcode = buffer[0];

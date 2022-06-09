@@ -50,8 +50,6 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
   auto source = (buffer[0] & 0xF0) >> 4;
   auto destination = (buffer[0] & 0x0F);
 
-  unsigned char buf[4];
-
   // If we're not in promiscuous mode and the message isn't for us, ignore it.
   if (!this->promiscuous_mode_ && destination != this->address_ && destination != 0xF) {
     return;
@@ -68,74 +66,90 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
   
   
   if(destination == address_) {
-    switch (buffer[0]) {
+    switch (buffer[0]) 
+    {
       // Handling the physical address response in code instead of yaml since I think it always
       // needs to happen for other devices to be able to talk to this device.
       case 0x83:
       // if (buffer[0] == 0x83 && destination == address_) {
+        {
         // Report physical address
-        buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff),
+        unsigned char buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff),
                                 address_};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
       // }
         break;
+        }
       //********************************
       // SUPPORT AV trafic
       // POWER STATUS - OFF
       case 0x8F:
       // if (buffer[0] == 0x8F && destination == address_) {
-        buf[2] = {0x90, 0x01};
+        {
+        unsigned char buf[2] = {0x90, 0x01};
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
         break;
+        }
       // OSD NAME
       case 0x46:
       // if (buffer[0] == 0x46 && destination == address_) {
-        buf[9] = {0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43}; //"SmartCEC"
+        {
+        unsigned char buf[9] = {0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43}; //"SmartCEC"
         this->send_data_internal_(this->address_, source, buf, 9);
       // }  
         break;
+        }
 
       // Vendor data
       case 0x8C:
       // if (buffer[0] == 0x8C && destination == address_) {
+        {
         unsigned char buf[4] = {0x87, 0x00, 0x00, 0x00}; //{0x87, 0x00, 0xE0, 0x36};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
       // }  
         break;
-
+        }
       // CEC Version
       case 0x9F:
       // if (buffer[0] == 0x9F && destination == address_) {
+        {
         unsigned char buf[2] = {0x9E, 0x05}; // Version 1.4
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
         break;
-
+        }
       // Give Deck status
       case 0x1A:
       // if (buffer[0] == 0x1A && destination == address_) {
+        {
         unsigned char buf[2] = {0x1B, 0x1A}; // Deck Status - Stop
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
-        break;      
+        break;
+        }      
       // Deck control
       case 0x42:
       // if (buffer[0] == 0x42 && destination == address_) {
+        {
         unsigned char buf[2] = {0x1B, 0x1A}; // Deck Status - Stop
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
         break;
+        }
       // Deck Play  
       case 0x41:
       // if (buffer[0] == 0x41 && destination == address_) {
+        {
         unsigned char buf[2] = {0x1B, 0x1A}; // Deck Status - Stop
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
         break;
+        }
       // Vendor command with ID  
       case 0xA0:
       // if (buffer[0] == 0xA0 && destination == address_) {
+        {
         if (source==0x05) {
           unsigned char buf[3] = {0x00, 0x00, 0x04}; // Abort - Refused
           this->send_data_internal_(this->address_, source, buf, 3);
@@ -145,12 +159,15 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
         }
       // }  
         break;
+        }
       //********************************
       // default:
       //   //INVALID OPERAND
-      //   unsigned char buf[3] = {0x00, 0x00, 0x03}; 
+      // {  
+      // unsigned char buf[3] = {0x00, 0x00, 0x03}; 
       //   this->send_data_internal_(this->address_, source, buf, 3);
       //   break;
+      // }
     }
   }
   uint8_t opcode = buffer[0];

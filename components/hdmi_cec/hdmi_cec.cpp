@@ -91,7 +91,7 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
       // OSD NAME
       case 0x46:
       // if (buffer[0] == 0x46 && destination == address_) {
-        unsigned char buf[9] = {0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43}; //"SmartCEC"
+        buf[9] = {0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43}; //"SmartCEC"
         this->send_data_internal_(this->address_, source, buf, 9);
       // }  
         break;

@@ -74,11 +74,10 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
       // if (buffer[0] == 0x83 && destination == address_) {
         
         // Report physical address
-        unsigned char buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff),
-                                address_};
+        unsigned char buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff), address_};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
-      // }
-        break;}
+        }
+        break;
       //********************************
       // SUPPORT AV trafic
       // POWER STATUS - OFF

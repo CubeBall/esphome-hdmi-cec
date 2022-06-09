@@ -97,7 +97,7 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
       // Vendor data
       case 0x8C:
       // if (buffer[0] == 0x8C && destination == address_) {
-        unsigned char buf[4] = {0x87, 0x00, 0xE0, 0x36};
+        unsigned char buf[4] = {0x87, 0x00, 0x00, 0x00}; //{0x87, 0x00, 0xE0, 0x36};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
       // }  
         break;

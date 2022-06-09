@@ -70,86 +70,71 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
     {
       // Handling the physical address response in code instead of yaml since I think it always
       // needs to happen for other devices to be able to talk to this device.
-      case 0x83:
+      case 0x83: {
       // if (buffer[0] == 0x83 && destination == address_) {
-        {
+        
         // Report physical address
         unsigned char buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff),
                                 address_};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
       // }
-        break;
-        }
+        break;}
       //********************************
       // SUPPORT AV trafic
       // POWER STATUS - OFF
-      case 0x8F:
+      case 0x8F: {
       // if (buffer[0] == 0x8F && destination == address_) {
-        {
+
         unsigned char buf[2] = {0x90, 0x01};
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
-        break;
-        }
+        break; }
       // OSD NAME
-      case 0x46:
+      case 0x46: {
       // if (buffer[0] == 0x46 && destination == address_) {
-        {
         unsigned char buf[9] = {0x47, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x43, 0x45, 0x43}; //"SmartCEC"
         this->send_data_internal_(this->address_, source, buf, 9);
       // }  
-        break;
-        }
+        break; }
 
       // Vendor data
-      case 0x8C:
+      case 0x8C: {
       // if (buffer[0] == 0x8C && destination == address_) {
-        {
         unsigned char buf[4] = {0x87, 0x00, 0x00, 0x00}; //{0x87, 0x00, 0xE0, 0x36};
         this->send_data_internal_(this->address_, 0xF, buf, 4);
       // }  
-        break;
-        }
+        break; }
       // CEC Version
-      case 0x9F:
+      case 0x9F: {
       // if (buffer[0] == 0x9F && destination == address_) {
-        {
         unsigned char buf[2] = {0x9E, 0x05}; // Version 1.4
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
-        break;
-        }
+        break; }
       // Give Deck status
-      case 0x1A:
+      case 0x1A: {
       // if (buffer[0] == 0x1A && destination == address_) {
-        {
         unsigned char buf[2] = {0x1B, 0x1A}; // Deck Status - Stop
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
-        break;
-        }      
+        break; }      
       // Deck control
-      case 0x42:
+      case 0x42: {
       // if (buffer[0] == 0x42 && destination == address_) {
-        {
         unsigned char buf[2] = {0x1B, 0x1A}; // Deck Status - Stop
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
-        break;
-        }
+        break; }
       // Deck Play  
-      case 0x41:
+      case 0x41: {
       // if (buffer[0] == 0x41 && destination == address_) {
-        {
         unsigned char buf[2] = {0x1B, 0x1A}; // Deck Status - Stop
         this->send_data_internal_(this->address_, source, buf, 2);
       // }  
-        break;
-        }
+        break; }
       // Vendor command with ID  
-      case 0xA0:
+      case 0xA0: {
       // if (buffer[0] == 0xA0 && destination == address_) {
-        {
         if (source==0x05) {
           unsigned char buf[3] = {0x00, 0x00, 0x04}; // Abort - Refused
           this->send_data_internal_(this->address_, source, buf, 3);
@@ -158,8 +143,7 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
         this->send_data_internal_(this->address_, source, buf, 3);
         }
       // }  
-        break;
-        }
+        break; }
       //********************************
       // default:
       //   //INVALID OPERAND

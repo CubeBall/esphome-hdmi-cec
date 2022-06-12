@@ -95,7 +95,7 @@ void HdmiCec::OnReceiveComplete(unsigned char *buffer, int count, bool ack) {
         }  
         break; 
 
-      // Vendor data
+      // Vendor ID
       case 0x8C: {
       // if (buffer[0] == 0x8C && destination == address_) {
         unsigned char buf[4] = {0x87, 0x00, 0x00, 0x00}; //{0x87, 0x00, 0xE0, 0x36};
@@ -184,6 +184,9 @@ void HdmiCec::setup() {
   // There's probably something that needs to wait a certain amount of time after
   // an interrupt.
   this->pin_->attach_interrupt(HdmiCec::pin_interrupt, this, gpio::INTERRUPT_ANY_EDGE);
+  // Report Physical Addres
+  unsigned char buf[4] = {0x84, (unsigned char) (physical_address_ >> 8), (unsigned char) (physical_address_ & 0xff), address_};
+  this->send_data_internal_(this->address_, 0xF, buf, 4);
 }
 
 void HdmiCec::dump_config() {
